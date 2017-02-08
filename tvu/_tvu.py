@@ -1,12 +1,19 @@
 # coding: utf-8
 import inspect
 
+import enum
+
 
 class TVU(object):
+
+    TYPES = (object,)
 
     def __init__(self, variable_name=None):
         self._variable_name = \
             variable_name or self.__class__.__name__ + u'() argument'
+
+    def _type_name(self, type_):
+        return type_.__name__
 
     def type_check(self):
         value = self._value
@@ -15,11 +22,11 @@ class TVU(object):
             return
 
         if len(types) == 1:
-            possible_types_string = types[0].__name__
+            possible_types_string = self._type_name(types[0])
         else:
             possible_types_string = \
-                u', '.join([type_.__name__ for type_ in types[:-1]]) \
-                + u' or ' + types[-1].__name__
+                u', '.join([self._type_name(type_) for type_ in types[:-1]]) \
+                + u' or ' + self._type_name(types[-1])
 
         err_msg = u'%s must be %s, not %s' % (self._variable_name,
                                               possible_types_string,
@@ -81,145 +88,59 @@ def validate_and_unify(**arg_validators):
         return inner_wrapper
     return wrapper
 
-# class EnumTVU(TVU):
 
-#     def _get_enum_type(self):
-#         for type_ in self.TYPES:
-#             if issubclass(type_, enum.Enum):
-#                 return type_
+class EnumTVU(TVU):
 
-#     def type_check(self):
-#         value = self._value
-#         if isinstance(value, str):
-#             enum_type = self._get_enum_type()
-#             try:
-#                 self._value = getattr(enum_type, value)
-#             except AttributeError:
-#                 msg = enum_type.__name__ + u"'s variant name"
-#                 self.error(msg, soft=True)
-#             return
-#         super(EnumTVU, self).type_check()
+    def _get_enum_type(self):
+        for type_ in self.TYPES:
+            if issubclass(type_, enum.Enum):
+                return type_
 
-
-# def instance(class_, enum=False):
-#     base = EnumTVU if enum else TVU
-
-#     class InstanceTVU(base):
-#         TYPES = (class_,)
-
-#     return InstanceTVU
+    def type_check(self):
+        value = self._value
+        if isinstance(value, str):
+            enum_type = self._get_enum_type()
+            try:
+                self._value = getattr(enum_type, value)
+            except AttributeError:
+                msg = enum_type.__name__ + u"'s variant name"
+                self.error(msg, soft=True)
+            return
+        super(EnumTVU, self).type_check()
 
 
-# def nullable(tvu):
+def instance(class_, enum=False):
+    base = EnumTVU if enum else TVU
 
-#     class NullableTVU(tvu):
-#         TYPES = tvu.TYPES + (type(None),)
+    class InstanceTVU(base):
+        TYPES = (class_,)
 
-#         def unify(self, value):
-#             if value is None:
-#                 return value
-#             return super(NullableTVU, self).unify(value)
-
-#         def validate(self, value):
-#             if value is None:
-#                 return
-#             super(NullableTVU, self).validate(value)
-
-#         def error(self, err_msg):
-#             err_msg = u'None or ' + err_msg
-#             return super(NullableTVU, self).error(err_msg)
-
-#     return NullableTVU
+    return InstanceTVU
 
 
-# def bounded_int(minimum=None, maximum=None):
+def nullable(tvu):
 
-#     class BoundedInt(TVU):
+    class NullableTVU(tvu):
+        TYPES = tvu.TYPES + (type(None),)
 
-#         TYPES = (int, float)
+        def _type_name(self, type_):
+            if isinstance(None, type_):
+                return 'None'
+            else:
+                return super(NullableTVU, self)._type_name(type_)
 
-#         def __init__(self, variable_name=None):
-#             self._variable_name = \
-#                 variable_name or self.__class__.__name__ + u'() argument'
+        def unify(self, value):
+            if value is None:
+                return value
+            return super(NullableTVU, self).unify(value)
 
-#         def unify(self, value):
-#             if isinstance(value, float) and round(value) != value:
-#                 self.error(u'a round integer')
-#             return int(value)
+        def validate(self, value):
+            if value is None:
+                return
+            super(NullableTVU, self).validate(value)
 
-#         def validate(self, value):
-#             if minimum is not None and maximum is not None\
-#                and not (minimum <= value <= maximum):
-#                 err_msg = \
-#                     u'an integer between %d and %d (inclusive)' % (minimum,
-#                                                                    maximum)
-#                 self.error(err_msg)
-#             elif minimum is not None and value < minimum:
-#                 err_msg = u'an integer greater or equal than %d' % (minimum,)
-#                 self.error(err_msg)
-#             elif maximum is not None and value > maximum:
-#                 err_msg = u'an integer lesser or equal than %d' % (maximum,)
-#                 self.error(err_msg)
+        def error(self, err_msg):
+            err_msg = u'None or ' + err_msg
+            return super(NullableTVU, self).error(err_msg)
 
-#     return BoundedInt
-
-# PositiveInt = bounded_int(1)
-
-
-# class Iterable(TVU):
-
-#     def type_check(self):
-#         value = self._value
-#         try:
-#             iter(value)
-#             return
-#         except TypeError:
-#             err_msg = u'%s must be iterable, not %s' % (self._variable_name,
-#                                                         unicode(self._value))
-#             raise TypeError(err_msg)
-
-
-# def args_of(tvu):
-
-#     class ArgsOf(TVU):
-
-#         def type_check(self):
-#             value = self._value
-#             try:
-#                 iter(value)
-#             except TypeError:
-#                 err_msg = u'%s must be iterable, not %s' % \
-#                     (self._variable_name, unicode(self._value))
-#                 raise TypeError(err_msg)
-
-#         def unify(self, value):
-#             result = []
-#             for i, elem in enumerate(value):
-#                 new_var_name = u'%s[%d]' % (self._variable_name, i)
-#                 validated_elem = tvu(new_var_name).unify_validate(elem)
-#                 result.append(validated_elem)
-#             return result
-
-#     return ArgsOf
-
-
-# class NonEmptyUnicode(TVU):
-
-#     TYPES = (unicode,)
-
-#     def validate(self, value):
-#         if value is u'':
-#             self.error(u'non-empty string')
-
-
-# class Text(TVU):
-
-#     TYPES = (unicode, str)
-
-#     def unify(self, value):
-#         if isinstance(value, str):
-#             try:
-#                 return value.decode('ascii')
-#             except UnicodeDecodeError:
-#                 self.error(u'unicode text, or ascii-only bytestring')
-#         return value
+    return NullableTVU
