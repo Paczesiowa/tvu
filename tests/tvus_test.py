@@ -1,5 +1,6 @@
 # coding: utf-8
 from test_utils import TestCase
+from test_compat import text
 
 import tvu
 import tvu.tvus as tvus
@@ -133,7 +134,7 @@ class IterableTest(TestCase):
     def not_stealing_test(self):
         @tvu(x=tvus.Iterable)
         def foo(x):
-            return iter(x).next()
+            return next(iter(x))
 
         self.assertEqual(foo([1, 2]), 1)
 
@@ -152,16 +153,17 @@ class TextTest(TestCase):
             return x
 
         self.assertEqual(foo(b''), u'')
-        self.assertTrue(isinstance(foo(b''), type(u'')))  # compat
+        self.assertTrue(isinstance(foo(b''), text))
         self.assertEqual(foo(u''), u'')
-        self.assertTrue(isinstance(foo(u''), type(u'')))  # compat
+        self.assertTrue(isinstance(foo(u''), text))
         self.assertEqual(foo(b'foo'), u'foo')
-        self.assertTrue(isinstance(foo(b'foo'), type(u'')))  # compat
+        self.assertTrue(isinstance(foo(b'foo'), text))
         self.assertEqual(foo(u'bar'), u'bar')
-        self.assertTrue(isinstance(foo(u'bar'), type(u'')))  # compat
+        self.assertTrue(isinstance(foo(u'bar'), text))
 
-        with self.assertRaises(TypeError,
-                               'x must be unicode or str, not None'):
+        err_msg = 'x must be %s or %s, not None' % (text.__name__,
+                                                    bytes.__name__)
+        with self.assertRaises(TypeError, err_msg):
             foo(None)
 
         err_msg = 'x must be unicode text, or ascii-only bytestring'
@@ -181,8 +183,9 @@ class NonEmptyTextTest(TestCase):
         self.assertEqual(foo(u'bar'), u'bar')
         self.assertTrue(isinstance(foo(u'bar'), type(u'')))  # compat
 
-        with self.assertRaises(TypeError,
-                               'x must be unicode or str, not None'):
+        err_msg = 'x must be %s or %s, not None' % (text.__name__,
+                                                    bytes.__name__)
+        with self.assertRaises(TypeError, err_msg):
             foo(None)
 
         err_msg = 'x must be unicode text, or ascii-only bytestring'

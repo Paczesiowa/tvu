@@ -3,6 +3,8 @@ import inspect
 
 import enum
 
+from tvu._compat import text
+
 
 class TVU(object):
 
@@ -30,7 +32,7 @@ class TVU(object):
 
         err_msg = u'%s must be %s, not %s' % (self._variable_name,
                                               possible_types_string,
-                                              unicode(self._value))
+                                              text(self._value))
         raise TypeError(err_msg)
 
     def unify_validate(self, value):
@@ -43,7 +45,7 @@ class TVU(object):
     def error(self, msg, soft=False):
         word = u'could' if soft else u'must'
         full_msg = (u'%s %s be ' + msg + u', not: %s') % \
-            (self._variable_name, word, unicode(self._value))
+            (self._variable_name, word, text(self._value))
         raise ValueError(full_msg)
 
     def unify(self, value):

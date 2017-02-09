@@ -6,18 +6,18 @@ class TVUModule(object):
     def __init__(self, name):
         self.__name__ = name
 
-        import _tvu
-        import tvus
+        import tvu._tvu
+        import tvu.tvus
 
-        self.tvus = tvus
+        self.tvus = tvu.tvus
 
-        self.TVU = _tvu.TVU
-        self.EnumTVU = _tvu.EnumTVU
+        self.TVU = tvu._tvu.TVU
+        self.EnumTVU = tvu._tvu.EnumTVU
 
-        self.instance = _tvu.instance
-        self.nullable = _tvu.nullable
+        self.instance = tvu._tvu.instance
+        self.nullable = tvu._tvu.nullable
 
-        self._validate_and_unify = _tvu.validate_and_unify
+        self._validate_and_unify = tvu._tvu.validate_and_unify
 
     def __call__(self, **kwargs):
         return self._validate_and_unify(**kwargs)

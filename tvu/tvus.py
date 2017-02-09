@@ -1,9 +1,10 @@
-import _tvu
+from tvu._tvu import TVU
+from tvu._compat import text
 
 
 def bounded_int(minimum=None, maximum=None):
 
-    class BoundedInt(_tvu.TVU):
+    class BoundedInt(TVU):
 
         TYPES = (int, float)
 
@@ -31,7 +32,7 @@ def bounded_int(minimum=None, maximum=None):
 PositiveInt = bounded_int(minimum=1)
 
 
-class Iterable(_tvu.TVU):
+class Iterable(TVU):
 
     def type_check(self):
         value = self._value
@@ -40,13 +41,13 @@ class Iterable(_tvu.TVU):
             return
         except TypeError:
             err_msg = u'%s must be iterable, not %s' % (self._variable_name,
-                                                        unicode(self._value))
+                                                        text(self._value))
             raise TypeError(err_msg)
 
 
-class Text(_tvu.TVU):
+class Text(TVU):
 
-    TYPES = (unicode, str)
+    TYPES = (text, bytes)
 
     def error(self, msg, soft=False):
         word = u'could' if soft else u'must'
@@ -55,7 +56,7 @@ class Text(_tvu.TVU):
         raise ValueError((u'%s %s be ' + msg) % (self._variable_name, word))
 
     def unify(self, value):
-        if isinstance(value, str):
+        if isinstance(value, bytes):
             try:
                 return value.decode('ascii')
             except UnicodeDecodeError:
