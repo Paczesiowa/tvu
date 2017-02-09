@@ -12,11 +12,6 @@ __version__ = '0.1'
 
 
 tests_require = ['nose == 1.3.7']
-# if sys.version_info < (3,):
-#     tests_require.append('unittest2 == 0.5.1')
-# else:
-#     tests_require.append('unittest2py3k == 0.5.1')
-
 install_require = []
 if sys.version_info < (3, 4):
     install_require.append('enum34 == 1.1.6')
