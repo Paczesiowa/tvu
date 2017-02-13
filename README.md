@@ -54,14 +54,15 @@ with anything else results in a nice exception:
 ```
 >>> foo('3')
 Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "/home/paczesiowa/projects/tvu/tvu/_tvu.py", line 72, in inner_wrapper
+  File "test.py", line 12, in <module>
+    foo('3')
+  File "/tmp/tvu-0.1/tvu/_tvu.py", line 70, in inner_wrapper
     validator(arg).unify_validate(args_values[arg])
-  File "/home/paczesiowa/projects/tvu/tvu/_tvu.py", line 40, in unify_validate
+  File "/tmp/tvu-0.1/tvu/_tvu.py", line 38, in unify_validate
     self.type_check()
-  File "/home/paczesiowa/projects/tvu/tvu/_tvu.py", line 36, in type_check
+  File "/tmp/tvu-0.1/tvu/_tvu.py", line 34, in type_check
     raise TypeError(err_msg)
-TypeError: x must be int, not 3
+TypeError: x must be int, not '3'
 ```
 
 This case of checking if argument is instance of one specific type can be done
@@ -109,7 +110,7 @@ class Text(tvu.TVU):
 def write(x):
     with open('/tmp/text.txt', 'wb') as f:
         f.write(x.encode('utf-8'))
-    
+
 write(u'żółw')
 write('ascii')
 ```

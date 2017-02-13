@@ -82,11 +82,11 @@ class TVUTest(TestCase):
 
         foo(1, 'a', .0)
 
-        with self.assertRaises(TypeError, 'x must be int, not 1'):
+        with self.assertRaises(TypeError, "x must be int, not '1'"):
             foo('1', 'a', .0)
         with self.assertRaises(TypeError, 'y must be str, not 1'):
             foo(x=1, y=1, z=.0)
-        with self.assertRaises(TypeError, 'z must be float, not 1.0'):
+        with self.assertRaises(TypeError, "z must be float, not '1.0'"):
             foo(1, 'a', z='1.0')
 
     def unification_test(self):
@@ -164,7 +164,7 @@ class TVUTest(TestCase):
                                'x must be SampleEnum, not None'):
             foo(None)
 
-        err_msg = "x could be SampleEnum's variant name, not: None"
+        err_msg = "x could be SampleEnum's variant name, not: 'None'"
         with self.assertRaises(ValueError, err_msg):
             foo('None')
 
@@ -193,7 +193,7 @@ class TVUTest(TestCase):
                                'x must be SampleEnum, not None'):
             foo(None)
 
-        err_msg = "x could be SampleEnum's variant name, not: None"
+        err_msg = "x could be SampleEnum's variant name, not: 'None'"
         with self.assertRaises(ValueError, err_msg):
             foo('None')
 
@@ -204,7 +204,7 @@ class TVUTest(TestCase):
 
         self.assertEqual(foo(1), 1)
         self.assertEqual(foo(None), None)
-        with self.assertRaises(TypeError, 'x must be int or None, not a'):
+        with self.assertRaises(TypeError, "x must be int or None, not 'a'"):
             foo('a')
 
     def nullable_complex_test(self):
@@ -230,7 +230,7 @@ class TVUTest(TestCase):
         self.assertEqual(foo(None), 0.)
 
         with self.assertRaises(TypeError,
-                               'x must be int, float or None, not a'):
+                               "x must be int, float or None, not 'a'"):
             foo('a')
 
         with self.assertRaises(ValueError,
@@ -246,6 +246,6 @@ class TVUTest(TestCase):
         def foo(x):
             pass
 
-        err_msg = "x could be None or SampleEnum's variant name, not: bar"
+        err_msg = "x could be None or SampleEnum's variant name, not: 'bar'"
         with self.assertRaises(ValueError, err_msg):
             foo('bar')
