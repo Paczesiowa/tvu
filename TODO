@@ -1,0 +1,4 @@
+* add ArgsOf
+* add readme to pypi
+* add py version to pypi
+* use repr, or wrap strings in typeerror messages

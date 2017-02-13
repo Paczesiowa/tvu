@@ -24,12 +24,7 @@ setup(name='tvu',
       version=__version__,
       packages=['tvu'],
       description=short_descr,
-      long_description='''This project provides function decorator, that
-helps with type-checking and validation of arguments supplied to
-a function, so a precise and helpful exception is thrown if arguments
-don't fulfill the function contract. Unification allows focusing
-on specific values inside function.
-''',
+      long_description=open('README.md', 'r').read(),
       author=u'Bartek Ćwikłowski',
       author_email='paczesiowa@gmail.com',
       url='https://github.com/Paczesiowa/tvu',

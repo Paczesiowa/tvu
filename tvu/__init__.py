@@ -1,3 +1,4 @@
+import pkg_resources
 import sys
 
 
@@ -18,6 +19,11 @@ class TVUModule(object):
         self.nullable = tvu._tvu.nullable
 
         self._validate_and_unify = tvu._tvu.validate_and_unify
+
+        try:
+            self.__version__ = pkg_resources.require('tvu')[0].version
+        except pkg_resources.DistributionNotFound:
+            self.__version__ = 'dev'
 
     def __call__(self, **kwargs):
         return self._validate_and_unify(**kwargs)
