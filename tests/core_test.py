@@ -240,3 +240,12 @@ class TVUTest(TestCase):
         with self.assertRaises(ValueError,
                                'x must be None or positive number, not: 0.0'):
             foo(0.)
+
+    def nullable_soft_error_test(self):
+        @tvu(x=tvu.nullable(tvu.instance(SampleEnum, enum=True)))
+        def foo(x):
+            pass
+
+        err_msg = "x could be None or SampleEnum's variant name, not: bar"
+        with self.assertRaises(ValueError, err_msg):
+            foo('bar')

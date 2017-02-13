@@ -141,8 +141,8 @@ def nullable(tvu):
                 return
             super(NullableTVU, self).validate(value)
 
-        def error(self, err_msg):
+        def error(self, err_msg, soft=False):
             err_msg = u'None or ' + err_msg
-            return super(NullableTVU, self).error(err_msg)
+            return super(NullableTVU, self).error(err_msg, soft)
 
     return NullableTVU
