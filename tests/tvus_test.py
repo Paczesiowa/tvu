@@ -122,7 +122,7 @@ class BoundedIntTest(TestCase):
 class IterableTest(TestCase):
 
     def iterable_test(self):
-        @tvu(x=tvus.Iterable)
+        @tvu(x=tvus.iterable())
         def foo(x):
             pass
 
@@ -132,7 +132,7 @@ class IterableTest(TestCase):
             foo(None)
 
     def not_stealing_test(self):
-        @tvu(x=tvus.Iterable)
+        @tvu(x=tvus.iterable())
         def foo(x):
             return next(iter(x))
 
@@ -143,6 +143,34 @@ class IterableTest(TestCase):
             yield 2
 
         self.assertEqual(foo(bar()), 1)
+
+    def iterable_with_elem_test(self):
+        @tvu(x=tvus.iterable(tvus.PositiveInt))
+        def foo(x):
+            pass
+
+        foo([])
+        foo(iter({1, 2, 3}))
+        with self.assertRaises(TypeError, 'x must be iterable, not None'):
+            foo(None)
+
+        err_msg = "x[0] must be int or float, not 'bar'"
+        with self.assertRaises(TypeError, err_msg):
+            foo(['bar'])
+
+        err_msg = \
+            "x[0] must be an integer greater or equal to 1, not: 0"
+        with self.assertRaises(ValueError, err_msg):
+            foo([0])
+
+        err_msg = "x[1] must be int or float, not 'bar'"
+        with self.assertRaises(TypeError, err_msg):
+            foo([1, 'bar'])
+
+        err_msg = \
+            "x[1] must be an integer greater or equal to 1, not: 0"
+        with self.assertRaises(ValueError, err_msg):
+            foo([1, 0])
 
 
 class TextTest(TestCase):
