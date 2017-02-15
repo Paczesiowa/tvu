@@ -25,6 +25,8 @@ class TVUModule(object):
         except pkg_resources.DistributionNotFound:
             self.__version__ = 'dev'
 
+        self.__file__ = __file__
+
     def __call__(self, **kwargs):
         return self._validate_and_unify(**kwargs)
 
