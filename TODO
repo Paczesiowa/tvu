@@ -1,3 +1,2 @@
 * add readme to pypi ?
-* 0.2
 * python setup.py install results in tvu.__version__ == 'dev'
