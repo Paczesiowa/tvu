@@ -1,2 +1,2 @@
-* add readme to pypi ?
+* make readme rst on the fly for pypi
 * python setup.py install results in tvu.__version__ == 'dev'
