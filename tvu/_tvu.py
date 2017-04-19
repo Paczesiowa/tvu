@@ -3,6 +3,8 @@ import inspect
 
 import enum
 
+from tvu._compat import basestr
+
 
 class TVU(object):
 
@@ -98,7 +100,7 @@ class EnumTVU(TVU):
 
     def type_check(self):
         value = self._value
-        if isinstance(value, str):
+        if isinstance(value, basestr):
             enum_type = self._get_enum_type()
             try:
                 self._value = getattr(enum_type, value)

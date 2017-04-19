@@ -1,3 +1,5 @@
+* 0.2.1
+	* EnumTVU now accepts unicode in Python-2.7 as variant name
 * 0.2
 	* README updated
 	* (bugfix) nullable().error() is now a proper overide of parent's method

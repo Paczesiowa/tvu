@@ -8,7 +8,7 @@ except ImportError:
     from setuptools import setup
 
 
-__version__ = '0.2'
+__version__ = '0.2.1'
 
 
 tests_require = ['nose == 1.3.7']

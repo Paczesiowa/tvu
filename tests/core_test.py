@@ -158,7 +158,7 @@ class TVUTest(TestCase):
         self.assertEqual(foo(SampleEnum.three), 3)
         self.assertEqual(foo('one'), 1)
         self.assertEqual(foo('two'), 2)
-        self.assertEqual(foo('three'), 3)
+        self.assertEqual(foo(u'three'), 3)
 
         with self.assertRaises(TypeError,
                                'x must be SampleEnum, not None'):
