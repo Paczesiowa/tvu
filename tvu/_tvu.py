@@ -100,7 +100,7 @@ class EnumTVU(TVU):
 
     def type_check(self):
         value = self._value
-        if isinstance(value, basestr):
+        if isinstance(value, basestr) and not isinstance(value, enum.Enum):
             enum_type = self._get_enum_type()
             try:
                 self._value = getattr(enum_type, value)

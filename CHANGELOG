@@ -1,3 +1,5 @@
+* 0.2.2
+	* EnumTVU works for classes that subclass both Enum and str/unicode
 * 0.2.1
 	* EnumTVU now accepts unicode in Python-2.7 as variant name
 * 0.2

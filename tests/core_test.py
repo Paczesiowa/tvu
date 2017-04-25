@@ -1,6 +1,7 @@
 from enum import Enum
 
 import tvu
+from tvu._compat import text, basestr
 from test_utils import TestCase
 
 
@@ -167,6 +168,40 @@ class TVUTest(TestCase):
         err_msg = "x could be SampleEnum's variant name, not: 'None'"
         with self.assertRaises(ValueError, err_msg):
             foo('None')
+
+    def unicode_enum_test(self):
+        class UnicodeEnum(text, Enum):
+            foo = u'bar'
+
+        @tvu(x=tvu.instance(UnicodeEnum, enum=True))
+        def foo(x):
+            return x.value
+
+        self.assertEqual(foo(UnicodeEnum.foo), u'bar')
+        self.assertEqual(foo('foo'), u'bar')
+
+        err_msg = "x could be UnicodeEnum's variant name, not: " + repr(u'bar')
+        with self.assertRaises(ValueError, err_msg):
+            foo(u'bar')
+
+        err_msg = "x could be UnicodeEnum's variant name, not: 'bar'"
+        with self.assertRaises(ValueError, err_msg):
+            foo('bar')
+
+    def str_enum_test(self):
+        class StrEnum(str, Enum):
+            foo = 'bar'
+
+        @tvu(x=tvu.instance(StrEnum, enum=True))
+        def foo(x):
+            return x.value
+
+        self.assertEqual(foo(StrEnum.foo), 'bar')
+        self.assertEqual(foo('foo'), 'bar')
+
+        err_msg = "x could be StrEnum's variant name, not: 'bar'"
+        with self.assertRaises(ValueError, err_msg):
+            foo('bar')
 
     def instance_test(self):
         @tvu(x=tvu.instance(int))
